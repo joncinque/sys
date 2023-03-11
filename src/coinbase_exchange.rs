@@ -1,3 +1,4 @@
+#![cfg(feature = "coinbase")]
 use {
     crate::{exchange::*, token::MaybeToken},
     async_trait::async_trait,

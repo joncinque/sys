@@ -8,6 +8,7 @@ default-run = "sys"
 
 [features]
 binance = ["dep:binance-rs-async"]
+coinbase = ["dep:coinbase-rs"]
 
 [dependencies]
 async-recursion = "1.0.0"
@@ -20,7 +21,7 @@ chrono = "0.4"
 chrono-humanize = "0.2.1"
 clap = "2.33"
 #coinbase-rs = { path = "../coinbase-rs" }
-coinbase-rs = { git = "https://github.com/mvines/coinbase-rs.git", rev = "0ada57aff324e4955db772caebd0e46190333a8c" }
+coinbase-rs = { git = "https://github.com/mvines/coinbase-rs.git", rev = "0ada57aff324e4955db772caebd0e46190333a8c", optional = true }
 console = "0.14.1"
 fd-lock = "3.0.0"
 ftx = { git = "https://github.com/fabianboesiger/ftx", rev = "bb98235d356dd1a2becc5bdf32a4b738311ed434" }
