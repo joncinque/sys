@@ -7,6 +7,7 @@ publish = false
 default-run = "sys"
 
 [features]
+default = ["binance", "coinbase", "ftx", "kraken"]
 binance = ["dep:binance-rs-async"]
 coinbase = ["dep:coinbase-rs"]
 ftx = ["dep:ftx"]
