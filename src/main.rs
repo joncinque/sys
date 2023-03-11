@@ -4124,6 +4124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "ftx",
         #[cfg(feature = "ftx")]
         "ftxus",
+        #[cfg(feature = "kraken")]
         "kraken",
     ];
 

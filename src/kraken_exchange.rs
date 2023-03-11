@@ -1,3 +1,4 @@
+#![cfg(feature = "kraken")]
 use {
     crate::{exchange::*, token::MaybeToken},
     async_trait::async_trait,

@@ -10,6 +10,7 @@ default-run = "sys"
 binance = ["dep:binance-rs-async"]
 coinbase = ["dep:coinbase-rs"]
 ftx = ["dep:ftx"]
+kraken = ["dep:kraken_sdk_rest"]
 
 [dependencies]
 async-recursion = "1.0.0"
@@ -34,7 +35,7 @@ itertools = "0.10.0"
 jup-ag = "0.6.0"
 #jup-ag = { path = "../jup_ag" }
 #kraken_sdk_rest = { path = "../kraken_sdk_rust/kraken_sdk_rest" }
-kraken_sdk_rest = { git = "https://github.com/mvines/kraken_sdk_rust", rev = "80c634b3a8527f653db989689b298496dad30d4e" }
+kraken_sdk_rest = { git = "https://github.com/mvines/kraken_sdk_rust", rev = "80c634b3a8527f653db989689b298496dad30d4e", optional = true }
 #kraken_sdk_rest = "0.18.0"
 lazy_static = "1.4.0"
 log = "0.4.17"
