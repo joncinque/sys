@@ -4120,7 +4120,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "binanceus",
         #[cfg(feature = "coinbase")]
         "coinbase",
+        #[cfg(feature = "ftx")]
         "ftx",
+        #[cfg(feature = "ftx")]
         "ftxus",
         "kraken",
     ];

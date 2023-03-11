@@ -1,3 +1,4 @@
+#![cfg(feature = "ftx")]
 use {
     crate::{
         exchange::*,

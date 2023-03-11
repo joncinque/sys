@@ -2,8 +2,10 @@
 use crate::binance_exchange;
 #[cfg(feature = "coinbase")]
 use crate::coinbase_exchange;
+#[cfg(feature = "ftx")]
+use crate::ftx_exchange;
 use {
-    crate::{ftx_exchange, kraken_exchange, token::MaybeToken},
+    crate::{kraken_exchange, token::MaybeToken},
     async_trait::async_trait,
     chrono::NaiveDate,
     serde::{Deserialize, Serialize},
@@ -20,7 +22,9 @@ pub enum Exchange {
     BinanceUs,
     #[cfg(feature = "coinbase")]
     Coinbase,
+    #[cfg(feature = "ftx")]
     Ftx,
+    #[cfg(feature = "ftx")]
     FtxUs,
     Kraken,
 }
@@ -44,7 +48,9 @@ impl FromStr for Exchange {
             "BinanceUs" | "binanceus" => Ok(Exchange::BinanceUs),
             #[cfg(feature = "coinbase")]
             "Coinbase" | "coinbase" => Ok(Exchange::Coinbase),
+            #[cfg(feature = "ftx")]
             "Ftx" | "ftx" => Ok(Exchange::Ftx),
+            #[cfg(feature = "ftx")]
             "FtxUs" | "ftxus" => Ok(Exchange::FtxUs),
             "Kraken" | "kraken" => Ok(Exchange::Kraken),
             _ => Err(ParseExchangeError::InvalidExchange),
@@ -217,7 +223,9 @@ pub fn exchange_client_new(
         Exchange::BinanceUs => Box::new(binance_exchange::new_us(exchange_credentials)?),
         #[cfg(feature = "coinbase")]
         Exchange::Coinbase => Box::new(coinbase_exchange::new(exchange_credentials)?),
+        #[cfg(feature = "ftx")]
         Exchange::Ftx => Box::new(ftx_exchange::new(exchange_credentials)?),
+        #[cfg(feature = "ftx")]
         Exchange::FtxUs => Box::new(ftx_exchange::new_us(exchange_credentials)?),
         Exchange::Kraken => Box::new(kraken_exchange::new(exchange_credentials)?),
     };
