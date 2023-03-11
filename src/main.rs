@@ -4113,7 +4113,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let today = Local::now().date();
         format!("{}/{}/{}", today.year(), today.month(), today.day())
     };
-    let exchanges = ["binance", "binanceus", "coinbase", "ftx", "ftxus", "kraken"];
+    let exchanges = [
+        #[cfg(feature = "binance")]
+        "binance",
+        #[cfg(feature = "binance")]
+        "binanceus",
+        "coinbase",
+        "ftx",
+        "ftxus",
+        "kraken",
+    ];
 
     let app_version = &*app_version();
     let mut app = App::new(crate_name!())

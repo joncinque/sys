@@ -1,7 +1,7 @@
+#[cfg(feature = "binance")]
+use crate::binance_exchange;
 use {
-    crate::{
-        binance_exchange, coinbase_exchange, ftx_exchange, kraken_exchange, token::MaybeToken,
-    },
+    crate::{coinbase_exchange, ftx_exchange, kraken_exchange, token::MaybeToken},
     async_trait::async_trait,
     chrono::NaiveDate,
     serde::{Deserialize, Serialize},
@@ -12,7 +12,9 @@ use {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Exchange {
+    #[cfg(feature = "binance")]
     Binance,
+    #[cfg(feature = "binance")]
     BinanceUs,
     Coinbase,
     Ftx,
@@ -33,7 +35,9 @@ impl FromStr for Exchange {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            #[cfg(feature = "binance")]
             "Binance" | "binance" => Ok(Exchange::Binance),
+            #[cfg(feature = "binance")]
             "BinanceUs" | "binanceus" => Ok(Exchange::BinanceUs),
             "Coinbase" | "coinbase" => Ok(Exchange::Coinbase),
             "Ftx" | "ftx" => Ok(Exchange::Ftx),
@@ -203,7 +207,9 @@ pub fn exchange_client_new(
     exchange_credentials: ExchangeCredentials,
 ) -> Result<Box<dyn ExchangeClient>, Box<dyn std::error::Error>> {
     let exchange_client: Box<dyn ExchangeClient> = match exchange {
+        #[cfg(feature = "binance")]
         Exchange::Binance => Box::new(binance_exchange::new(exchange_credentials)?),
+        #[cfg(feature = "binance")]
         Exchange::BinanceUs => Box::new(binance_exchange::new_us(exchange_credentials)?),
         Exchange::Coinbase => Box::new(coinbase_exchange::new(exchange_credentials)?),
         Exchange::Ftx => Box::new(ftx_exchange::new(exchange_credentials)?),
