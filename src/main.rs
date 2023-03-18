@@ -3440,6 +3440,7 @@ async fn process_account_sync(
     max_epochs_to_process: Option<u64>,
     reconcile_no_sync_account_balances: bool,
     notifier: &Notifier,
+    force_sync: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     process_account_sync_pending_transfers(db, rpc_client).await?;
     process_account_sync_sweep(db, rpc_client, notifier).await?;
@@ -3527,13 +3528,13 @@ async fn process_account_sync(
         .unwrap_or(&stop_epoch)
         + 1;
 
-    if start_epoch > stop_epoch {
+    if start_epoch > stop_epoch && !force_sync {
         println!("Processed up to epoch {stop_epoch}");
         return Ok(());
     }
 
     if let Some(max_epochs_to_process) = max_epochs_to_process {
-        if max_epochs_to_process == 0 {
+        if max_epochs_to_process == 0 && !force_sync {
             return Ok(());
         }
         stop_epoch = stop_epoch.min(start_epoch.saturating_add(max_epochs_to_process - 1));
@@ -4195,6 +4196,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .validator(is_parsable::<u64>)
                         .help("Only process up to this number of epochs for account balance changes [default: all]"),
                 )
+                .arg(
+                    Arg::with_name("force")
+                        .long("force")
+                        .takes_value(false)
+                        .help("Force synchronize even if all epochs have been processed")
+                )
         .subcommand(
             SubCommand::with_name("db")
                 .about("Database management")
@@ -4752,6 +4759,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 .long("reconcile-no-sync-account-balances")
                                 .takes_value(false)
                                 .help("Reconcile local account balances with on-chain state for --no-sync accounts (advanced; uncommon)"),
+                        )
+                        .arg(
+                            Arg::with_name("force")
+                                .long("force")
+                                .takes_value(false)
+                                .help("Force synchronize even if all epochs have been processed")
                         )
                 )
                 .subcommand(
@@ -5749,6 +5762,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         ("sync", Some(arg_matches)) => {
             let max_epochs_to_process = value_t!(arg_matches, "max_epochs_to_process", u64).ok();
+            let force_sync = arg_matches.is_present("force");
             process_sync_swaps(&mut db, &rpc_client, &notifier).await?;
             for (exchange, exchange_credentials, exchange_account) in
                 db.get_default_accounts_from_configured_exchanges()
@@ -5771,6 +5785,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 max_epochs_to_process,
                 false,
                 &notifier,
+                force_sync,
             )
             .await?;
         }
@@ -5892,7 +5907,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ui_amount,
                 )
                 .await?;
-                process_account_sync(&mut db, &rpc_client, Some(address), None, false, &notifier)
+                process_account_sync(&mut db, &rpc_client, Some(address), None, false, &notifier, true)
                     .await?;
             }
             ("dispose", Some(arg_matches)) => {
@@ -6168,6 +6183,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     arg_matches.is_present("reconcile_no_sync_account_balances");
                 let max_epochs_to_process =
                     value_t!(arg_matches, "max_epochs_to_process", u64).ok();
+                let force_sync = arg_matches.is_present("force");
                 process_account_sync(
                     &mut db,
                     &rpc_client,
@@ -6175,6 +6191,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     max_epochs_to_process,
                     reconcile_no_sync_account_balances,
                     &notifier,
+                    force_sync,
                 )
                 .await?;
             }
