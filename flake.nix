@@ -3,7 +3,7 @@
     fenix.url = "github:nix-community/fenix";
     flake-utils.url = "github:numtide/flake-utils";
     naersk.url = "github:nix-community/naersk";
-    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
   };
 
   outputs = { self, fenix, flake-utils, naersk, nixpkgs }:
@@ -17,8 +17,6 @@
         triples = {
           x86_64-linux = "x86_64-unknown-linux-musl";
           aarch64-linux = "aarch64-unknown-linux-musl";
-          aarch64-darwin = "aarch64-apple-darwin";
-          x86_64-darwin = "x86_64-apple-darwin";
         };
 
         buildTriple = triples.${buildSystem};
@@ -37,8 +35,8 @@
         fenixPkgs = fenix.packages.${buildSystem};
 
         mkToolchain = fenixPkgs: fenixPkgs.toolchainOf {
-          channel = "1.81.0";
-          sha256 = "VZZnlyP69+Y3crrLHQyJirqlHrTtGTsyiSnZB8jEvVo=";
+          channel = "1.84.1";
+          sha256 = "vMlz0zHduoXtrlu0Kj1jEp71tYFXyymACW8L4jzrzNA=";
         };
 
         mkToolchainOverride = targetSystem:
@@ -82,9 +80,10 @@
             # position-independent-execution enabled.
             # (see: https://github.com/rust-lang/rust/issues/79624#issuecomment-737415388)
             CARGO_BUILD_RUSTFLAGS = [
-              "-C target-feature=+crt-static"
+              "-C" "target-feature=+crt-static"
               # https://github.com/rust-lang/cargo/issues/4133
               "-C" "linker=${TARGET_CC}"
+              "-L" "${pkgsCross.pkgsStatic.udev}/lib"
             ];
 
             OPENSSL_STATIC = "1";
